@@ -1,12 +1,14 @@
 package com.lvsecoto.bluemine
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.lvsecoto.bluemine.ui.home.IssuesListFragment
+import com.lvsecoto.bluemine.utils.navigation.NavigationActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : NavigationActivity() {
+    override val startFragment: Fragment
+        get() = IssuesListFragment()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    override fun navigateTo(action: String, bundle: Bundle?) {
     }
 }
