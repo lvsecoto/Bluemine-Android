@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lvsecoto.bluemine.R
 import com.lvsecoto.bluemine.databinding.FragmentIssueDetailBinding
 import com.lvsecoto.bluemine.databinding.ViewItemIssueDetailBinding
+import com.lvsecoto.bluemine.utils.navigation.popup
 import com.lvsecoto.bluemine.utils.recyclerview.ConcatAdapter
 import com.lvsecoto.bluemine.utils.recyclerview.SingleViewAdapter
 
@@ -30,6 +31,9 @@ class IssueDetailFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        binding.icBack.setOnClickListener {
+            popup()
+        }
         detailAdapter.submit {
 
         }

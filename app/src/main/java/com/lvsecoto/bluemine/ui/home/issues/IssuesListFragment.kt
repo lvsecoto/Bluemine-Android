@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lvsecoto.bluemine.R
 import com.lvsecoto.bluemine.databinding.FragmentIssuesListBinding
 import com.lvsecoto.bluemine.ui.home.project.ProjectListFragment
-import com.lvsecoto.bluemine.utils.showToast
+import com.lvsecoto.bluemine.utils.navigation.navigation
+
+const val ACTION_VIEW_ISSUE_DETAIL = "ACTION_VIEW_ISSUE_DETAIL"
 
 class IssuesListFragment : Fragment() {
 
@@ -34,16 +36,6 @@ class IssuesListFragment : Fragment() {
         return binding.root
     }
 
-    private fun setupProjectsDrawer() {
-        if (fragmentManager!!.findFragmentById(binding.projects.id) == null) {
-
-            fragmentManager!!.commit {
-                replace(binding.projects.id, ProjectListFragment())
-            }
-
-        }
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         issuesAdapter.submitDemo(
@@ -60,7 +52,17 @@ class IssuesListFragment : Fragment() {
             )
         )
         issuesAdapter.onClickItem = {
-            showToast("click position $it!")
+            navigation.navigateTo(ACTION_VIEW_ISSUE_DETAIL)
+        }
+    }
+
+    private fun setupProjectsDrawer() {
+        var fragment = childFragmentManager.findFragmentById(binding.projects.id)
+        if (fragment == null) {
+            fragment = ProjectListFragment()
+            childFragmentManager.commit {
+                replace(binding.projects.id, fragment)
+            }
         }
     }
 

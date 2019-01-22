@@ -22,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/ic_menu"
+            android:id="@+id/ic_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -43,14 +43,14 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:textColor="@color/primaryTextColor"
             app:layout_constraintBottom_toBottomOf="@+id/bg_tool_bar"
-            app:layout_constraintStart_toEndOf="@+id/ic_menu" />
+            app:layout_constraintStart_toEndOf="@+id/ic_back" />
 
         <androidx.constraintlayout.widget.helper.Layer
             android:id="@+id/layer_toolbar"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:elevation="4dp"
-            app:constraint_referenced_ids="title,ic_menu,bg_tool_bar"
+            app:constraint_referenced_ids="title,ic_back,bg_tool_bar"
             tools:ignore="MissingConstraints" />
 
         <androidx.recyclerview.widget.RecyclerView
