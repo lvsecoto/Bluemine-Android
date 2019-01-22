@@ -2,6 +2,7 @@ package com.lvsecoto.bluemine.utils.recyclerview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
@@ -10,6 +11,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lvsecoto.bluemine.BR
 
+/**
+ * 带数据绑定，带数据比较[DiffUtil]功能的[RecyclerView.Adapter]
+ */
 abstract class DataBoundListAdapter<T, V : ViewDataBinding> protected constructor(diffCallback: DiffUtil.ItemCallback<T>) :
     ListAdapter<T, DataBoundListAdapter.ViewHolder<V>>(diffCallback) {
 
@@ -31,12 +35,13 @@ abstract class DataBoundListAdapter<T, V : ViewDataBinding> protected constructo
         return layoutId
     }
 
-    protected abstract val layoutId :Int
-
     protected open fun onBindData(dataBinding: V, item: T, position: Int) {
         dataBinding.setVariable(BR.item, item)
         dataBinding.executePendingBindings()
     }
+
+    @get:LayoutRes
+    protected abstract val layoutId :Int
 
     class ViewHolder<V : ViewDataBinding>(val mDataBinding: V) : RecyclerView.ViewHolder(mDataBinding.root)
 }
