@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * 包装类, 用于连接多个Adapter
+ */
 public class ConcatAdapter extends Adapter {
 
     private final ArrayList<Adapter> mChildAdapters;
