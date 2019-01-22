@@ -1,5 +1,6 @@
 package com.lvsecoto.bluemine.ui.home.issues
 
+import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.DiffUtil
 import com.lvsecoto.bluemine.R
 import com.lvsecoto.bluemine.databinding.ViewItemIssueBinding
@@ -18,6 +19,7 @@ class IssuesAdapter :
 
     var onClickItem : ((Int) -> Unit)? = null
 
+    @get:LayoutRes
     override val layoutId: Int
         get() = R.layout.view_item_issue
 
