@@ -1,8 +1,8 @@
 package com.lvsecoto.bluemine.ui.home.project
 
 import androidx.lifecycle.ViewModel
-import com.lvsecoto.bluemine.data.network.service.RedMineService
+import com.lvsecoto.bluemine.data.repo.Repository
 
-class ProjectListViewModel(redMineService: RedMineService) : ViewModel() {
-    val projects = redMineService.getProject()
+class ProjectListViewModel(repo: Repository) : ViewModel() {
+    val projects = repo.getProject()
 }
