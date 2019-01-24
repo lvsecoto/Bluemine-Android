@@ -1,4 +1,4 @@
-package com.lvsecoto.bluemine.utils
+package com.lvsecoto.bluemine.utils.toast
 
 import android.widget.Toast
 import androidx.fragment.app.Fragment

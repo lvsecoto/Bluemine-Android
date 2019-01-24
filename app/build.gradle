@@ -18,8 +18,16 @@ android {
     }
     buildTypes {
         release {
+            buildConfigField "String", "TEST_REDMINE_HOST_NAME", "\"$TEST_REDMINE_HOST_NAME\""
+            buildConfigField "String", "TEST_REDMINE_USER_NAME", "\"$TEST_REDMINE_USER_NAME\""
+            buildConfigField "String", "TEST_REDMINE_PASSWORD", "\"$TEST_REDMINE_PASSWORD\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            buildConfigField "String", "TEST_REDMINE_HOST_NAME", "\"$TEST_REDMINE_HOST_NAME\""
+            buildConfigField "String", "TEST_REDMINE_USER_NAME", "\"$TEST_REDMINE_USER_NAME\""
+            buildConfigField "String", "TEST_REDMINE_PASSWORD", "\"$TEST_REDMINE_PASSWORD\""
         }
     }
     dataBinding {
@@ -27,6 +35,10 @@ android {
     }
     kapt {
         generateStubs = true
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 }
 
@@ -59,9 +71,18 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-intents:$rootProject.espressoVersion"
     androidTestImplementation "androidx.test.uiautomator:uiautomator:$rootProject.uiAutomatorVersion"
     testImplementation "junit:junit:$rootProject.junitVersion"
+    androidTestImplementation "com.google.truth:truth:0.42"
 
     // additional
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+
+    // Kotlin
+    def koin_version = '1.0.1'
+
+    // koin di
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
+    implementation "org.koin:koin-java:$koin_version"
+
 }
 
