@@ -18,7 +18,6 @@ package com.lvsecoto.bluemine.data.network.utils
 
 
 import androidx.lifecycle.LiveData
-import com.lvsecoto.bluemine.data.network.ApiResponse
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Callback

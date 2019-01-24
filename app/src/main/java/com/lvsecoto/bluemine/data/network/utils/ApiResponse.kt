@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.lvsecoto.bluemine.data.network
+package com.lvsecoto.bluemine.data.network.utils
 
 import retrofit2.Response
 
