@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
-            android:text="@{item.title}"
+            android:text="@{item.meta}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:text="菜单列表页，图中标记的菜类的排列顺序，排反了。（菜类的sequence号越小，需要拍照越上面）"
+            android:text="@{item.subject}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintEnd_toStartOf="@+id/status"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +48,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="新建"
+            android:text="@{item.statusName}"
             tools:text="新建" />
 
         <View

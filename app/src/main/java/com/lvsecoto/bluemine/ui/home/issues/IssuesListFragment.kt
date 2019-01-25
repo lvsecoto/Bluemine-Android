@@ -10,15 +10,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lvsecoto.bluemine.R
+import com.lvsecoto.bluemine.data.repo.utils.errorReport
+import com.lvsecoto.bluemine.data.repo.utils.statusobserver.data
 import com.lvsecoto.bluemine.databinding.FragmentIssuesListBinding
 import com.lvsecoto.bluemine.ui.home.project.ProjectListFragment
 import com.lvsecoto.bluemine.utils.navigation.navigation
+import org.koin.android.viewmodel.ext.android.viewModel
 
 const val ACTION_VIEW_ISSUE_DETAIL = "ACTION_VIEW_ISSUE_DETAIL"
 
 class IssuesListFragment : Fragment() {
 
     private lateinit var binding: FragmentIssuesListBinding
+
+    private val viewModel: IssuesViewModel by viewModel()
 
     private val issuesAdapter = IssuesAdapter()
 
@@ -28,35 +33,29 @@ class IssuesListFragment : Fragment() {
         binding.issues.layoutManager = LinearLayoutManager(context)
         binding.issues.adapter = issuesAdapter
 
-        binding.icMenu.setOnClickListener {
-            binding.drawer.openDrawer(GravityCompat.START)
-        }
-        setupProjectsDrawer()
-
+        setupProjectDrawer()
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        issuesAdapter.submitDemo(
-            arrayListOf(
-                "123",
-                "456",
-                "789",
-                "123",
-                "456",
-                "789",
-                "123",
-                "456",
-                "789"
-            )
-        )
         issuesAdapter.onClickItem = {
             navigation.navigateTo(ACTION_VIEW_ISSUE_DETAIL)
         }
+        viewModel.issues.errorReport(this)
+        viewModel.issues.data(this) {
+            issuesAdapter.submitIssues(it)
+        }
     }
 
-    private fun setupProjectsDrawer() {
+    private fun setupProjectDrawer() {
+        binding.icMenu.setOnClickListener {
+            binding.drawer.openDrawer(GravityCompat.START)
+        }
+        setupProjectsDrawerFragment()
+    }
+
+    private fun setupProjectsDrawerFragment() {
         var fragment = childFragmentManager.findFragmentById(binding.projects.id)
         if (fragment == null) {
             fragment = ProjectListFragment()
