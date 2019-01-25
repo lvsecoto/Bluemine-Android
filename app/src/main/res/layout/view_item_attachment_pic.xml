@@ -6,7 +6,7 @@
     <data>
         <variable
             name="item"
-            type="com.lvsecoto.bluemine.ui.home.issuedetail.AttachmentPicAdapter.Wrapper"/>
+            type="com.lvsecoto.bluemine.ui.issuedetail.AttachmentPicAdapter.Wrapper"/>
     </data>
 
     <FrameLayout

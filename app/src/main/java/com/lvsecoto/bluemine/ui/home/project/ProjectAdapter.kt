@@ -15,11 +15,64 @@ class ProjectAdapter : DataBoundListAdapter<ProjectAdapter.Wrapper, ViewItemProj
             oldItem == newItem
     }
 ) {
+    var onClickProject: ((Project) -> Unit)? = null
+
+    var onSelectedPositionChange: ((Int) -> Unit)? = null
+    var onSelectedProjectChange: ((Project?) -> Unit)? = null
+
+    /**
+     * [selectedPosition]不一定在列表范围内
+     */
+    var selectedPosition: Int = 0
+        set(newPosition) {
+            if (newPosition != field) {
+                notifyItemChanged(newPosition)
+                notifyItemChanged(field)
+
+                field = newPosition
+
+                onSelectedPositionChange?.invoke(newPosition)
+            }
+        }
+
+    /**
+     * 每当[selectedPosition]和列表的数据间关系发生变化时，都应当更新[selectedProject]
+     */
+    private var selectedProject: Project? = null
+        set(newProject) {
+            if (field != newProject) {
+                field = newProject
+
+                onSelectedProjectChange?.invoke(newProject)
+            }
+        }
+
     override val layoutId: Int
         get() = R.layout.view_item_project
 
+    override fun onBindData(dataBinding: ViewItemProjectBinding, item: Wrapper, position: Int) {
+        super.onBindData(dataBinding, item, position)
+
+        dataBinding.isSelected = position == selectedPosition
+        dataBinding.root.setOnClickListener {
+            onClickProject?.invoke(item.project)
+
+            selectedPosition = position
+            selectedProject = getItemBoundSave(position)
+        }
+    }
+
     fun submitProject(demos: List<Project>?) {
         submitList((demos ?: emptyList()).map { Wrapper(it) })
+        selectedProject = getItemBoundSave(selectedPosition)
+    }
+
+    private fun getItemBoundSave(position: Int): Project? {
+        return if (position in 0 until itemCount) {
+            getItem(position).project
+        } else {
+            null
+        }
     }
 
     data class Wrapper(val project: Project) {

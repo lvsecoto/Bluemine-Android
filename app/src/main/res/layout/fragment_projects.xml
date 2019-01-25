@@ -41,11 +41,12 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="28dp"
-            tools:listitem="@layout/view_item_project"
+            android:layout_marginTop="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider" />
+            app:layout_constraintTop_toBottomOf="@+id/divider"
+            tools:listitem="@layout/view_item_project" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -1,4 +1,4 @@
-package com.lvsecoto.bluemine.ui.home.issuedetail
+package com.lvsecoto.bluemine.ui.issuedetail
 
 import android.os.Bundle
 import android.view.LayoutInflater

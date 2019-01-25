@@ -9,11 +9,15 @@
             name="item"
             type="com.lvsecoto.bluemine.ui.home.project.ProjectAdapter.Wrapper"/>
 
+        <variable
+            name="isSelected"
+            type="Boolean"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@{isSelected ? @color/primaryLightColor : @color/primaryColor}"
         tools:background="@color/primaryColor"
         android:orientation="vertical">
 
@@ -27,7 +31,7 @@
             android:layout_marginBottom="12dp"
             android:text="@{item.name}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:textColor="@color/primaryTextColor"
+            android:textColor="@{isSelected ? @color/primaryDarkColor : @color/primaryTextColor}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
