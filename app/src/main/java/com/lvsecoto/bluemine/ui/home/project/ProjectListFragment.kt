@@ -12,7 +12,6 @@ import com.lvsecoto.bluemine.data.repo.utils.errorReport
 import com.lvsecoto.bluemine.data.repo.utils.statusobserver.data
 import com.lvsecoto.bluemine.databinding.FragmentProjectsBinding
 import com.lvsecoto.bluemine.ui.home.HomeViewModel
-import com.lvsecoto.bluemine.utils.toast.showToast
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -58,10 +57,10 @@ class ProjectListFragment : Fragment() {
         }
 
         projectAdapter.onClickProject = {
-            hostViewModel.actionClickedProjectItem.value = it
+            hostViewModel.onClickProject.value = it
         }
         projectAdapter.onSelectedProjectChange = {
-            showToast("project is $it?.id")
+            hostViewModel.onSelectProject.value = it
         }
     }
 }

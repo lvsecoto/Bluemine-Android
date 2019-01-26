@@ -48,15 +48,20 @@ class IssuesListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        hostViewModel.actionClickedProjectItem.observe(viewLifecycleOwner, Observer {
+        hostViewModel.onClickProject.observe(viewLifecycleOwner, Observer {
             binding.drawer.closeDrawer(DRAWER_GRAVITY_PROJECT)
         })
-        issuesAdapter.onClickItem = {
-            navigation.navigateTo(ACTION_VIEW_ISSUE_DETAIL)
-        }
+        hostViewModel.onSelectProject.observe(viewLifecycleOwner, Observer {
+            it?.id?.let(viewModel::searchIssue)
+        })
+
         viewModel.issues.errorReport(this)
         viewModel.issues.data(this) {
             issuesAdapter.submitIssues(it)
+        }
+
+        issuesAdapter.onClickItem = {
+            navigation.navigateTo(ACTION_VIEW_ISSUE_DETAIL)
         }
     }
 

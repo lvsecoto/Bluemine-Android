@@ -5,5 +5,6 @@ import com.lvsecoto.bluemine.data.repo.utils.event.SingleLiveEvent
 import com.lvsecoto.bluemine.data.vo.Project
 
 class HomeViewModel : ViewModel() {
-    val actionClickedProjectItem = SingleLiveEvent<Project>()
+    val onClickProject = SingleLiveEvent<Project>()
+    val onSelectProject = SingleLiveEvent<Project>()
 }

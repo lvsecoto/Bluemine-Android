@@ -11,7 +11,7 @@
 
         <variable
             name="isSelected"
-            type="Boolean"/>
+            type="boolean"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,6 +32,7 @@
             android:text="@{item.name}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:textColor="@{isSelected ? @color/primaryDarkColor : @color/primaryTextColor}"
+            tools:textColor="@color/primaryTextColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -47,22 +47,24 @@ class Repository(
         }.asLiveData()
     }
 
-    fun getIssues(): LiveData<Resource<List<Issue>>> {
+    fun getIssues(projectId: Int): LiveData<Resource<List<Issue>>> {
+        val key = "${KEY_ISSUES}_$projectId"
+
         return object : NetworkBoundResource<List<Issue>, IssuesResponse>(executes) {
             override fun saveCallResult(item: IssuesResponse) {
-                pref.putObjectOrObjectList(KEY_ISSUES, item.issues.map {
+                pref.putObjectOrObjectList(key, item.issues.map {
                     Issue(it.id, it.subject, it.status.id, it.status.name, it.priority.name)
                 })
             }
 
             override fun shouldFetch(data: List<Issue>?): Boolean =
-                data == null || data.isEmpty() || limiter.shouldFetch(KEY_ISSUES)
+                data == null || data.isEmpty() || limiter.shouldFetch(key)
 
             override fun loadFromDb(): LiveData<List<Issue>> =
-                pref.objectListLiveData(KEY_ISSUES)
+                pref.objectListLiveData(key)
 
             override fun createCall(): LiveData<ApiResponse<IssuesResponse>> =
-                service.getIssues()
+                service.getIssues(projectId)
 
         }.asLiveData()
     }

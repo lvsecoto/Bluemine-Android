@@ -5,5 +5,4 @@ import com.lvsecoto.bluemine.data.repo.Repository
 
 class ProjectListViewModel(repo: Repository) : ViewModel() {
     val projects = repo.getProjects()
-    val issues = repo.getIssues()
 }
