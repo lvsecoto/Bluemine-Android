@@ -3,6 +3,8 @@ package com.lvsecoto.bluemine.data.repo
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.lvsecoto.bluemine.AppExecutors
+import com.lvsecoto.bluemine.data.cache.db.AppDao
+import com.lvsecoto.bluemine.data.cache.db.entities.ProjectEntity
 import com.lvsecoto.bluemine.data.cache.utils.objectListLiveData
 import com.lvsecoto.bluemine.data.cache.utils.objectLiveData
 import com.lvsecoto.bluemine.data.cache.utils.putObjectOrObjectList
@@ -26,6 +28,7 @@ private const val KEY_ISSUES_DETAIL = "KEY_ISSUES_DETAIL"
 class Repository(
     private val executes: AppExecutors,
     private val service: RedMineService,
+    private val appDao: AppDao,
     private val pref: SharedPreferences
 ) {
     val limiter = RateLimiter<String>(5, TimeUnit.MINUTES)
@@ -33,9 +36,14 @@ class Repository(
     fun getProjects(): LiveData<Resource<List<Project>>> {
         return object : NetworkBoundResource<List<Project>, ProjectResponse>(executes) {
             override fun saveCallResult(item: ProjectResponse) {
-                pref.putObjectOrObjectList(KEY_PROJECTS, item.projects.map {
-                    Project(id = it.id, name = it.name)
-                })
+                appDao.initWithProjects(
+                    item.projects.map {
+                        ProjectEntity(
+                            projectId = it.id,
+                            projectName = it.name
+                        )
+                    }
+                )
             }
 
             override fun shouldFetch(data: List<Project>?): Boolean {
@@ -43,7 +51,7 @@ class Repository(
             }
 
             override fun loadFromDb(): LiveData<List<Project>> =
-                pref.objectListLiveData(KEY_PROJECTS)
+                appDao.findAllProject()
 
             override fun createCall(): LiveData<ApiResponse<ProjectResponse>> =
                 service.getProject()
