@@ -56,7 +56,7 @@ class IssuesListFragment : Fragment() {
         })
 
         viewModel.issues.errorReport(this)
-        viewModel.issues.data(this) {
+        viewModel.issues.data(viewLifecycleOwner) {
             issuesAdapter.submitIssues(it)
         }
 

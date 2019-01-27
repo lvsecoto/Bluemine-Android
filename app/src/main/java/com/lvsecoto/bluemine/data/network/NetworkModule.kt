@@ -1,6 +1,11 @@
 package com.lvsecoto.bluemine.data.network
 
+import android.content.Context
 import android.util.Log
+import com.franmontiel.persistentcookiejar.ClearableCookieJar
+import com.franmontiel.persistentcookiejar.PersistentCookieJar
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -15,13 +20,14 @@ import org.koin.dsl.module.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 const val HOST_NAME = BuildConfig.TEST_REDMINE_HOST_NAME
 const val USER_NAME = BuildConfig.TEST_REDMINE_USER_NAME
 const val USER_PASSWORD = BuildConfig.TEST_REDMINE_PASSWORD
 
 val networkModule = module {
     single { createGson() }
-    single { createClient() }
+    single { createClient(get()) }
     single { createRetrofit(get()) }
     single { createRedMineService(get()) }
 }
@@ -40,8 +46,14 @@ fun createRetrofit(client: OkHttpClient): Retrofit =
         .addCallAdapterFactory(LiveDataCallAdapterFactory())
         .build()
 
-fun createClient(): OkHttpClient =
-    OkHttpClient()
+
+fun createClient(context: Context): OkHttpClient {
+    val cookieJar: ClearableCookieJar = PersistentCookieJar(
+        SetCookieCache(),
+        SharedPrefsCookiePersistor(context)
+    )
+
+    return OkHttpClient()
         .newBuilder()
         .addInterceptor { chain: Interceptor.Chain? ->
             chain!!.request().let {
@@ -57,19 +69,24 @@ fun createClient(): OkHttpClient =
 
             }.let { chain.proceed(it) }
         }
-        .authenticator { route, response ->
+        .addInterceptor { chain ->
             val credential = Credentials.basic(USER_NAME, USER_PASSWORD)
-            response.request().newBuilder()
+            val request = chain.request()
+                .newBuilder()
                 .header("Authorization", credential)
                 .build()
+
+            chain.proceed(request)
         }
+        .cookieJar(cookieJar)
         .addNetworkInterceptor { chain ->
+
             val requestUrl = chain.request().url().toString()
             val response = chain.proceed(chain.request())
             val responseBody = response.peekBody(1000 * 1000).string()
             val responseJson = try {
                 JSONObject(responseBody).toString(2) ?: responseBody
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 responseBody
             }
             Log.e(
@@ -82,6 +99,7 @@ body: $responseJson
             response
         }
         .build()
+}
 
 fun createRedMineService(retrofit: Retrofit): RedMineService =
     retrofit.create(RedMineService::class.java)

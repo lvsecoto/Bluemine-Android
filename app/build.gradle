@@ -76,6 +76,8 @@ dependencies {
     // additional
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+    implementation "com.squareup.okhttp3:okhttp-urlconnection:3.12.1"
+    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
 
     // Kotlin
     def koin_version = '1.0.1'

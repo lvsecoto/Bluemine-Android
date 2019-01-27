@@ -4,8 +4,8 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.lvsecoto.bluemine.AppExecutors
 import com.lvsecoto.bluemine.data.cache.db.AppDao
+import com.lvsecoto.bluemine.data.cache.db.entities.IssueEntity
 import com.lvsecoto.bluemine.data.cache.db.entities.ProjectEntity
-import com.lvsecoto.bluemine.data.cache.utils.objectListLiveData
 import com.lvsecoto.bluemine.data.cache.utils.objectLiveData
 import com.lvsecoto.bluemine.data.cache.utils.putObjectOrObjectList
 import com.lvsecoto.bluemine.data.network.response.IssueDetailResponse
@@ -51,7 +51,7 @@ class Repository(
             }
 
             override fun loadFromDb(): LiveData<List<Project>> =
-                appDao.findAllProject()
+                appDao.findAllProjects()
 
             override fun createCall(): LiveData<ApiResponse<ProjectResponse>> =
                 service.getProject()
@@ -64,16 +64,26 @@ class Repository(
 
         return object : NetworkBoundResource<List<Issue>, IssuesResponse>(executes) {
             override fun saveCallResult(item: IssuesResponse) {
-                pref.putObjectOrObjectList(key, item.issues.map {
-                    Issue(it.id, it.subject, it.status.id, it.status.name, it.priority.name)
-                })
+                appDao.initWithIssuesByProject(
+                    item.issues.map {
+                        IssueEntity(
+                            issueId = it.id,
+                            projectId = projectId,
+                            subject = it.subject,
+                            statusId = it.status.id,
+                            statusName = it.status.name,
+                            meta = it.priority.name
+                        )
+                    },
+                    projectId
+                )
             }
 
             override fun shouldFetch(data: List<Issue>?): Boolean =
                 data == null || data.isEmpty() || limiter.shouldFetch(key)
 
             override fun loadFromDb(): LiveData<List<Issue>> =
-                pref.objectListLiveData(key)
+                appDao.findIssuesByProject(projectId)
 
             override fun createCall(): LiveData<ApiResponse<IssuesResponse>> =
                 service.getIssues(projectId)

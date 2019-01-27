@@ -3,12 +3,11 @@ package com.lvsecoto.bluemine.data.cache.db.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(
-    tableName = "project"
-)
-data class ProjectEntity (
+@Entity
+data class IssueDetail(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val projectId: Int,
-    val projectName: String
+    val int: Int,
+
+    val issueId: Int
+
 )
