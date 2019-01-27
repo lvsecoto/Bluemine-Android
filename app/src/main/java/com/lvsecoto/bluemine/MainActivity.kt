@@ -13,7 +13,9 @@ class MainActivity : NavigationActivity() {
 
     override fun navigateTo(action: String, bundle: Bundle?) {
         when(action) {
-            ACTION_VIEW_ISSUE_DETAIL -> navigateToAndAddToBackStack(IssueDetailFragment())
+            ACTION_VIEW_ISSUE_DETAIL -> navigateToAndAddToBackStack(
+                IssueDetailFragment.getInstance(bundle!!.getInt("issueId"))
+            )
         }
     }
 }

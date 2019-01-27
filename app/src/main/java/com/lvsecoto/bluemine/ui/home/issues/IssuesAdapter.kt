@@ -18,7 +18,7 @@ class IssuesAdapter :
         }
     ) {
 
-    var onClickItem : ((Int) -> Unit)? = null
+    var onClickItem : ((issueId: Int) -> Unit)? = null
 
     @get:LayoutRes
     override val layoutId: Int
@@ -27,7 +27,7 @@ class IssuesAdapter :
     override fun onBindData(dataBinding: ViewItemIssueBinding, item: Wrapper, position: Int) {
         super.onBindData(dataBinding, item, position)
         dataBinding.root.setOnClickListener {
-            onClickItem?.invoke(position)
+            onClickItem?.invoke(item.issue.id)
         }
     }
 

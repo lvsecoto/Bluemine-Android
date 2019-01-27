@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder
 import com.lvsecoto.bluemine.BuildConfig
 import com.lvsecoto.bluemine.data.network.service.RedMineService
 import com.lvsecoto.bluemine.data.network.utils.LiveDataCallAdapterFactory
+import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.json.JSONObject
@@ -48,8 +49,6 @@ fun createClient(): OkHttpClient =
                 val urlWithRealHostNameAndAuthor = it.url()
                     .newBuilder()
                     .host(HOST_NAME)
-                    .username(USER_NAME)
-                    .password(USER_PASSWORD)
                     .build()
 
                 it.newBuilder()
@@ -58,11 +57,21 @@ fun createClient(): OkHttpClient =
 
             }.let { chain.proceed(it) }
         }
+        .authenticator { route, response ->
+            val credential = Credentials.basic(USER_NAME, USER_PASSWORD)
+            response.request().newBuilder()
+                .header("Authorization", credential)
+                .build()
+        }
         .addNetworkInterceptor { chain ->
             val requestUrl = chain.request().url().toString()
             val response = chain.proceed(chain.request())
             val responseBody = response.peekBody(1000 * 1000).string()
-            val responseJson = JSONObject(responseBody).toString(2)
+            val responseJson = try {
+                JSONObject(responseBody).toString(2) ?: responseBody
+            } catch (e : Exception) {
+                responseBody
+            }
             Log.e(
                 "NetworkLog", """======
 url: $requestUrl

@@ -4,7 +4,9 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.lvsecoto.bluemine.AppExecutors
 import com.lvsecoto.bluemine.data.cache.utils.objectListLiveData
+import com.lvsecoto.bluemine.data.cache.utils.objectLiveData
 import com.lvsecoto.bluemine.data.cache.utils.putObjectOrObjectList
+import com.lvsecoto.bluemine.data.network.response.IssueDetailResponse
 import com.lvsecoto.bluemine.data.network.response.IssuesResponse
 import com.lvsecoto.bluemine.data.network.response.ProjectResponse
 import com.lvsecoto.bluemine.data.network.service.RedMineService
@@ -13,11 +15,13 @@ import com.lvsecoto.bluemine.data.repo.utils.NetworkBoundResource
 import com.lvsecoto.bluemine.data.repo.utils.RateLimiter
 import com.lvsecoto.bluemine.data.repo.utils.Resource
 import com.lvsecoto.bluemine.data.vo.Issue
+import com.lvsecoto.bluemine.data.vo.IssueDetail
 import com.lvsecoto.bluemine.data.vo.Project
 import java.util.concurrent.TimeUnit
 
 private const val KEY_PROJECTS = "KEY_PROJECTS"
 private const val KEY_ISSUES = "KEY_ISSUES"
+private const val KEY_ISSUES_DETAIL = "KEY_ISSUES_DETAIL"
 
 class Repository(
     private val executes: AppExecutors,
@@ -68,4 +72,32 @@ class Repository(
 
         }.asLiveData()
     }
+
+    fun getIssueDetail(id: Int): LiveData<Resource<IssueDetail>> {
+        val key = "${KEY_ISSUES_DETAIL}_$id"
+
+        return object : NetworkBoundResource<IssueDetail, IssueDetailResponse>(executes) {
+            override fun saveCallResult(item: IssueDetailResponse) {
+                pref.putObjectOrObjectList(key, item.issue.let {
+                    IssueDetail(
+                        subject = it.subject,
+                        description = it.description,
+                        priorityName = it.priority.name,
+                        statusName = it.status.name,
+                        updatedOn = it.updated_on
+                    )
+                })
+            }
+
+            override fun shouldFetch(data: IssueDetail?): Boolean =
+                data == null
+
+            override fun loadFromDb(): LiveData<IssueDetail> =
+                pref.objectLiveData(key)
+
+            override fun createCall(): LiveData<ApiResponse<IssueDetailResponse>> =
+                service.getIssueDetail(id)
+        }.asLiveData()
+    }
+
 }

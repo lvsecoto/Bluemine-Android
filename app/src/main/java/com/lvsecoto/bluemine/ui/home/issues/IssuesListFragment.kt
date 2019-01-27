@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -26,12 +27,11 @@ private const val DRAWER_GRAVITY_PROJECT = GravityCompat.START
 
 class IssuesListFragment : Fragment() {
 
-
     private lateinit var binding: FragmentIssuesListBinding
 
     private val viewModel: IssuesViewModel by viewModel()
 
-    private val hostViewModel : HomeViewModel by sharedViewModel()
+    private val hostViewModel: HomeViewModel by sharedViewModel()
 
     private val issuesAdapter = IssuesAdapter()
 
@@ -61,7 +61,11 @@ class IssuesListFragment : Fragment() {
         }
 
         issuesAdapter.onClickItem = {
-            navigation.navigateTo(ACTION_VIEW_ISSUE_DETAIL)
+            navigation.navigateTo(
+                ACTION_VIEW_ISSUE_DETAIL, bundleOf(
+                    "issueId" to it
+                )
+            )
         }
     }
 
