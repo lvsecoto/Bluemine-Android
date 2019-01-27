@@ -31,7 +31,7 @@ interface AppDao {
     @Query("SELECT projectId as id, projectName as name FROM project ORDER BY projectId")
     fun findAllProjects(): LiveData<List<Project>>
 
-    @Insert
+    @Insert()
     fun insertIssues(issues: List<IssueEntity>)
 
     @Query("DELETE from issue WHERE projectId == :projectId")

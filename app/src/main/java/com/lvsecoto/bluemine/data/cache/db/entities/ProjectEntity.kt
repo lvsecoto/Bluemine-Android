@@ -1,12 +1,19 @@
 package com.lvsecoto.bluemine.data.cache.db.entities
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "project"
+    tableName = "project",
+    indices = [
+        Index(
+            value = ["projectId"],
+            unique = true
+        )
+    ]
 )
-data class ProjectEntity (
+data class ProjectEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val projectId: Int,
