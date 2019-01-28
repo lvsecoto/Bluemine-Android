@@ -4,10 +4,11 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.lvsecoto.bluemine.AppExecutors
 import com.lvsecoto.bluemine.data.cache.db.AppDao
+import com.lvsecoto.bluemine.data.cache.db.entities.AttachmentEntity
+import com.lvsecoto.bluemine.data.cache.db.entities.IssueDetailEntity
 import com.lvsecoto.bluemine.data.cache.db.entities.IssueEntity
 import com.lvsecoto.bluemine.data.cache.db.entities.ProjectEntity
-import com.lvsecoto.bluemine.data.cache.utils.objectLiveData
-import com.lvsecoto.bluemine.data.cache.utils.putObjectOrObjectList
+import com.lvsecoto.bluemine.data.cache.db.findIssueDetailById
 import com.lvsecoto.bluemine.data.network.response.IssueDetailResponse
 import com.lvsecoto.bluemine.data.network.response.IssuesResponse
 import com.lvsecoto.bluemine.data.network.response.ProjectResponse
@@ -91,30 +92,53 @@ class Repository(
         }.asLiveData()
     }
 
-    fun getIssueDetail(id: Int): LiveData<Resource<IssueDetail>> {
-        val key = "${KEY_ISSUES_DETAIL}_$id"
+    fun getIssueDetail(issueId: Int): LiveData<Resource<IssueDetail>> {
+        val key = "${KEY_ISSUES_DETAIL}_$issueId"
 
         return object : NetworkBoundResource<IssueDetail, IssueDetailResponse>(executes) {
             override fun saveCallResult(item: IssueDetailResponse) {
-                pref.putObjectOrObjectList(key, item.issue.let {
-                    IssueDetail(
-                        subject = it.subject,
-                        description = it.description,
-                        priorityName = it.priority.name,
-                        statusName = it.status.name,
-                        updatedOn = it.updated_on
-                    )
-                })
+                appDao.initIssueDetailById(issueId,
+                    item.issue.let {
+                        IssueDetailEntity(
+                            issueId = issueId,
+                            projectId = it.project.id,
+                            description = it.description,
+                            priorityName = it.priority.name,
+                            updateOn = it.updated_on
+                        )
+                    },
+                    item.issue.attachments?.map {
+                        AttachmentEntity(
+                            issueId = issueId,
+                            projectId = item.issue.project.id,
+                            attachmentId = it.id,
+                            contentType = it.content_type,
+                            contentUrl = it.content_url,
+                            thumbnailUrl = it.thumbnail_url
+                        )
+                    }?: emptyList()
+                )
+
+//                pref.putObjectOrObjectList(key, item.issue.let {
+//                    IssueDetail(
+//                        subject = it.subject,
+//                        description = it.description,
+//                        priorityName = it.priority.name,
+//                        statusName = it.status.name,
+//                        updatedOn = it.updated_on
+//                    )
+//                })
             }
 
             override fun shouldFetch(data: IssueDetail?): Boolean =
-                data == null
+                data == null || !data.hasDetail
 
             override fun loadFromDb(): LiveData<IssueDetail> =
-                pref.objectLiveData(key)
+//                pref.objectLiveData(key)
+                appDao.findIssueDetailById(issueId)
 
             override fun createCall(): LiveData<ApiResponse<IssueDetailResponse>> =
-                service.getIssueDetail(id)
+                service.getIssueDetail(issueId)
         }.asLiveData()
     }
 

@@ -4,6 +4,7 @@ data class IssueDetailResponse(
     val issue: Issue
 ) {
     data class Issue(
+        val attachments: List<Attachment>?,
         val author: Author,
         val closed_on: Any,
         val created_on: String,
@@ -38,6 +39,23 @@ data class IssueDetailResponse(
             val id: Int,
             val name: String
         )
+
+        data class Attachment(
+            val author: Author,
+            val content_type: String,
+            val content_url: String,
+            val created_on: String,
+            val description: String,
+            val filename: String,
+            val filesize: Int,
+            val id: Int,
+            val thumbnail_url: String
+        ) {
+            data class Author(
+                val id: Int,
+                val name: String
+            )
+        }
 
         data class Project(
             val id: Int,

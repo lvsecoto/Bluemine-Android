@@ -1,13 +1,14 @@
 package com.lvsecoto.bluemine.data.cache.db
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.lifecycle.Transformations
+import androidx.room.*
+import com.lvsecoto.bluemine.data.cache.db.entities.AttachmentEntity
+import com.lvsecoto.bluemine.data.cache.db.entities.IssueDetailEntity
 import com.lvsecoto.bluemine.data.cache.db.entities.IssueEntity
 import com.lvsecoto.bluemine.data.cache.db.entities.ProjectEntity
 import com.lvsecoto.bluemine.data.vo.Issue
+import com.lvsecoto.bluemine.data.vo.IssueDetail
 import com.lvsecoto.bluemine.data.vo.Project
 
 fun createAppDao(db: AppDatabase) =
@@ -57,6 +58,78 @@ interface AppDao {
     )
     fun findIssuesByProject(projectId: Int): LiveData<List<Issue>>
 
-//    @Query("UPDATE OR REPLACE ")
-//    fun insertIssueDetail()
+    @Insert()
+    fun insertAttachments(attachmentEntities: List<AttachmentEntity>)
+
+    @Query("DELETE FROM attachment WHERE issueId == :issueId")
+    fun deleteAttachmentsByIssue(issueId: Int)
+
+    @Transaction
+    fun initAttachmentByIssue(issueId: Int, attachmentEntities: List<AttachmentEntity>) {
+        deleteAttachmentsByIssue(issueId)
+        insertAttachments(attachmentEntities)
+    }
+
+    @Insert()
+    fun insertIssueDetail(issueDetailEntity: IssueDetailEntity)
+
+    @Query("DELETE FROM issueDetail WHERE issueId == :issueId")
+    fun deleteIssueDetailByIssue(issueId: Int)
+
+    @Transaction
+    fun initIssueDetailById(
+        issueId: Int,
+        issueDetailEntity: IssueDetailEntity,
+        attachmentEntities: List<AttachmentEntity>
+    ) {
+        deleteIssueDetailByIssue(issueId)
+        insertIssueDetail(issueDetailEntity)
+        deleteAttachmentsByIssue(issueId)
+        insertAttachments(attachmentEntities)
+    }
+
+    @Transaction
+    @Query("SELECT * FROM issue WHERE issueId == :issueId")
+    fun findIssueDetailRelationById(issueId: Int): LiveData<IssueDetailRelation>
+
+
+    class IssueDetailRelation(
+        @Embedded
+        val issueEntity: IssueEntity,
+
+        @Relation(
+            entity = IssueDetailEntity::class,
+            parentColumn = "issueId", entityColumn = "issueId"
+        )
+        val issueDetailEntities: List<IssueDetailEntity>,
+
+        @Relation(
+            entity = AttachmentEntity::class,
+            parentColumn = "issueId", entityColumn = "issueId"
+        )
+        val attachmentEntities: List<AttachmentEntity>
+    ) {
+        val issueDetailEntity: IssueDetailEntity?
+            get() = issueDetailEntities.firstOrNull()
+    }
 }
+
+fun AppDao.findIssueDetailById(issueId: Int) =
+    this.findIssueDetailRelationById(issueId).map {
+        IssueDetail(
+            issueId = it.issueEntity.issueId,
+            subject = it.issueEntity.subject,
+            statusName = it.issueEntity.statusName,
+
+            hasDetail = it.issueDetailEntity != null,
+            description = it.issueDetailEntity?.description ?: "",
+            priorityName = it.issueDetailEntity?.priorityName ?: "",
+            updatedOn = it.issueDetailEntity?.updateOn ?: ""
+        )
+    }
+
+private fun <I, O> LiveData<I>.switchMap(input: (I) -> LiveData<O>): LiveData<O> =
+    Transformations.switchMap(this, input)
+
+private fun <I, O> LiveData<I>.map(input: (I) -> O): LiveData<O> =
+    Transformations.map(this, input)

@@ -6,34 +6,31 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "issue",
+    tableName = "attachment",
     indices = [
         Index(
-            value = ["issueId", "projectId"],
-            unique = true
+            "issueId"
         ),
         Index(
-            value = ["projectId"],
-            unique = false
+            value = ["issueId", "projectId"]
         )
     ],
     foreignKeys = [
         ForeignKey(
-            entity = ProjectEntity::class,
-            parentColumns = ["projectId"],
-            childColumns = ["projectId"],
+            entity = IssueEntity::class,
+            parentColumns = ["issueId", "projectId"],
+            childColumns = ["issueId", "projectId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class IssueEntity(
+data class AttachmentEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val issueId: Int,
     val projectId: Int,
-
-    val subject: String,
-    val statusId: Int,
-    val statusName: String,
-    val meta: String
+    val attachmentId: Int,
+    val contentType: String,
+    val contentUrl: String,
+    val thumbnailUrl: String
 )
