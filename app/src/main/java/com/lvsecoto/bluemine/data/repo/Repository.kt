@@ -69,7 +69,7 @@ class Repository(
                     item.issues.map {
                         IssueEntity(
                             issueId = it.id,
-                            projectId = projectId,
+                            projectId = it.project.id,
                             subject = it.subject,
                             statusId = it.status.id,
                             statusName = it.status.name,
