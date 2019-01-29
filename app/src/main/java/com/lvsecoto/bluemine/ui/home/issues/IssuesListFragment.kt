@@ -67,6 +67,10 @@ class IssuesListFragment : Fragment() {
                 )
             )
         }
+        issuesAdapter.onClickIssueStatus = {
+            viewModel.changeIssueStatus(it)
+        }
+        viewModel.changeIssueStatusResult.errorReport(this)
     }
 
     private fun setupProjectDrawer() {

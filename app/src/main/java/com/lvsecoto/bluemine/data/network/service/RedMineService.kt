@@ -1,13 +1,12 @@
 package com.lvsecoto.bluemine.data.network.service
 
 import androidx.lifecycle.LiveData
+import com.lvsecoto.bluemine.data.network.request.IssueStatusRequest
 import com.lvsecoto.bluemine.data.network.response.IssueDetailResponse
 import com.lvsecoto.bluemine.data.network.response.IssuesResponse
 import com.lvsecoto.bluemine.data.network.response.ProjectResponse
 import com.lvsecoto.bluemine.data.network.utils.ApiResponse
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface RedMineService {
 
@@ -19,4 +18,7 @@ interface RedMineService {
 
     @GET("/issues/{issue_id}.json")
     fun getIssueDetail(@Path("issue_id") id: Int): LiveData<ApiResponse<IssueDetailResponse>>
+
+    @PUT("/issues/{issue_id}.json")
+    fun updateIssueStatus(@Path("issue_id") issueId: Int, @Body issuesStatusRequest: IssueStatusRequest): LiveData<ApiResponse<Void>>
 }

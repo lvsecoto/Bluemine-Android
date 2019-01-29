@@ -2,6 +2,7 @@ package com.lvsecoto.bluemine.data.repo
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.lvsecoto.bluemine.AppExecutors
 import com.lvsecoto.bluemine.data.cache.db.AppDao
 import com.lvsecoto.bluemine.data.cache.db.entities.AttachmentEntity
@@ -9,6 +10,7 @@ import com.lvsecoto.bluemine.data.cache.db.entities.IssueDetailEntity
 import com.lvsecoto.bluemine.data.cache.db.entities.IssueEntity
 import com.lvsecoto.bluemine.data.cache.db.entities.ProjectEntity
 import com.lvsecoto.bluemine.data.cache.db.findIssueDetailById
+import com.lvsecoto.bluemine.data.network.request.IssueStatusRequest
 import com.lvsecoto.bluemine.data.network.response.IssueDetailResponse
 import com.lvsecoto.bluemine.data.network.response.IssuesResponse
 import com.lvsecoto.bluemine.data.network.response.ProjectResponse
@@ -36,9 +38,9 @@ class Repository(
 
     fun getProjects(): LiveData<Resource<List<Project>>> {
         return object : NetworkBoundResource<List<Project>, ProjectResponse>(executes) {
-            override fun saveCallResult(item: ProjectResponse) {
+            override fun saveCallResult(item: ProjectResponse?) {
                 appDao.initWithProjects(
-                    item.projects.map {
+                    item!!.projects.map {
                         ProjectEntity(
                             projectId = it.id,
                             projectName = it.name
@@ -64,9 +66,9 @@ class Repository(
         val key = "${KEY_ISSUES}_$projectId"
 
         return object : NetworkBoundResource<List<Issue>, IssuesResponse>(executes) {
-            override fun saveCallResult(item: IssuesResponse) {
+            override fun saveCallResult(item: IssuesResponse?) {
                 appDao.initWithIssuesByProject(
-                    item.issues.map {
+                    item!!.issues.map {
                         IssueEntity(
                             issueId = it.id,
                             projectId = it.project.id,
@@ -96,9 +98,10 @@ class Repository(
         val key = "${KEY_ISSUES_DETAIL}_$issueId"
 
         return object : NetworkBoundResource<IssueDetail, IssueDetailResponse>(executes) {
-            override fun saveCallResult(item: IssueDetailResponse) {
-                appDao.initIssueDetailById(issueId,
-                    item.issue.let {
+            override fun saveCallResult(item: IssueDetailResponse?) {
+                appDao.initIssueDetailById(
+                    issueId,
+                    item!!.issue.let {
                         IssueDetailEntity(
                             issueId = issueId,
                             projectId = it.project.id,
@@ -116,25 +119,14 @@ class Repository(
                             contentUrl = it.content_url,
                             thumbnailUrl = it.thumbnail_url
                         )
-                    }?: emptyList()
+                    } ?: emptyList()
                 )
-
-//                pref.putObjectOrObjectList(key, item.issue.let {
-//                    IssueDetail(
-//                        subject = it.subject,
-//                        description = it.description,
-//                        priorityName = it.priority.name,
-//                        statusName = it.status.name,
-//                        updatedOn = it.updated_on
-//                    )
-//                })
             }
 
             override fun shouldFetch(data: IssueDetail?): Boolean =
                 data == null || !data.hasDetail
 
             override fun loadFromDb(): LiveData<IssueDetail> =
-//                pref.objectLiveData(key)
                 appDao.findIssueDetailById(issueId)
 
             override fun createCall(): LiveData<ApiResponse<IssueDetailResponse>> =
@@ -142,4 +134,24 @@ class Repository(
         }.asLiveData()
     }
 
+    fun changeIssueStatus(issueId: Int, statusId: Int, statusName: String): LiveData<Resource<Void>> {
+        val result = MutableLiveData<Void>()
+        result.value = null
+
+        return object : NetworkBoundResource<Void, Void>(executes) {
+            override fun saveCallResult(item: Void?) {
+                appDao.updateIssueStatus(issueId, statusId, statusName)
+            }
+
+            override fun shouldFetch(data: Void?): Boolean =
+                true
+
+            override fun loadFromDb(): LiveData<Void> =
+                result
+
+            override fun createCall(): LiveData<ApiResponse<Void>> =
+                service.updateIssueStatus(issueId, IssueStatusRequest(statusId))
+
+        }.asLiveData()
+    }
 }

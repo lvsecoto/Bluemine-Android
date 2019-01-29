@@ -4,18 +4,53 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.lvsecoto.bluemine.data.repo.Repository
+import com.lvsecoto.bluemine.data.vo.Issue
+import com.lvsecoto.bluemine.utils.ActionLiveData
 
 class IssuesViewModel(
     repo: Repository
 ) : ViewModel() {
 
-    private val searchedProjectId = MutableLiveData<Int>()
+    // todo 先获取issue处理方式，再处理
+    private val searchIssueByProjectId = MutableLiveData<Int>()
 
-    val issues = Transformations.switchMap(searchedProjectId) {
+    fun searchIssue(projectId: Int) {
+        searchIssueByProjectId.value = projectId
+    }
+
+    val issues = Transformations.switchMap(searchIssueByProjectId) {
         repo.getIssues(it)
     }!!
 
-    fun searchIssue(projectId: Int) {
-        searchedProjectId.value = projectId
+    enum class STATUS(val statusId: Int, val statusName: String) {
+        CREATED(1, "新建"),
+        WORKING(2, "进行中"),
+        RESOLVED(3, "已解决")
     }
+
+    private val actionChangeIssueStatus = ActionLiveData.create { issue: Issue ->
+
+        val targetStatusId: Int
+        val targetStatusName: String
+
+        when {
+           issue.statusId != STATUS.RESOLVED.statusId -> {
+                targetStatusId = STATUS.RESOLVED.statusId
+                targetStatusName = STATUS.RESOLVED.statusName
+            }
+            else -> {
+                targetStatusId = STATUS.WORKING.statusId
+                targetStatusName = STATUS.WORKING.statusName
+            }
+        }
+
+        repo.changeIssueStatus(issue.id, targetStatusId, targetStatusName)
+    }
+
+    fun changeIssueStatus(issue: Issue) {
+        actionChangeIssueStatus.input(issue)
+    }
+
+    val changeIssueStatusResult
+        get() = actionChangeIssueStatus.asLiveData()
 }

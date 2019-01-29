@@ -15,6 +15,7 @@ import com.lvsecoto.bluemine.data.network.utils.LiveDataCallAdapterFactory
 import okhttp3.Credentials
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okio.Buffer
 import org.json.JSONObject
 import org.koin.dsl.module.module
 import retrofit2.Retrofit
@@ -82,6 +83,15 @@ fun createClient(context: Context): OkHttpClient {
         .addNetworkInterceptor { chain ->
 
             val requestUrl = chain.request().url().toString()
+            val body = try {
+                val buffer =  Buffer()
+                chain.request().body()?.writeTo(buffer).run {
+                    buffer.readUtf8()
+                }
+            } catch (e: Exception) {
+                null
+            }
+
             val response = chain.proceed(chain.request())
             val responseBody = response.peekBody(1000 * 1000).string()
             val responseJson = try {
@@ -89,10 +99,15 @@ fun createClient(context: Context): OkHttpClient {
             } catch (e: Exception) {
                 responseBody
             }
+            val responseCode = response.code()
             Log.e(
                 "NetworkLog", """======
 url: $requestUrl
-body: $responseJson
+request body:
+${(body?:"").prependIndent("  ")}
+body:
+${responseJson.prependIndent("  ")}
+code: $responseCode
 """
             )
 

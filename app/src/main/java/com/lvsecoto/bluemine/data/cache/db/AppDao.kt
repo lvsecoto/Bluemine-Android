@@ -92,6 +92,11 @@ interface AppDao {
     @Query("SELECT * FROM issue WHERE issueId == :issueId")
     fun findIssueDetailRelationById(issueId: Int): LiveData<IssueDetailRelation>
 
+    @Query("""UPDATE issue
+        SET statusId = :statusId, statusName = :statusName
+        WHERE issueId == :issueId
+        """)
+    fun updateIssueStatus(issueId: Int, statusId: Int, statusName: String)
 
     class IssueDetailRelation(
         @Embedded
