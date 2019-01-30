@@ -7,6 +7,7 @@ import org.koin.dsl.module.module
 
 val repoModule = module {
     single { Repository(get(), get(), get(), createPref("repo")) }
+    single { SettingsRepository(get(), createPref("settings")) }
 }
 
 private fun ModuleDefinition.createPref(prefName: String) =

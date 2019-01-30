@@ -22,6 +22,7 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 const val ACTION_VIEW_ISSUE_DETAIL = "ACTION_VIEW_ISSUE_DETAIL"
+const val ACTION_SETTINGS = "ACTION_SETTINGS"
 
 private const val DRAWER_GRAVITY_PROJECT = GravityCompat.START
 
@@ -71,6 +72,10 @@ class IssuesListFragment : Fragment() {
             viewModel.changeIssueStatus(it)
         }
         viewModel.changeIssueStatusResult.errorReport(this)
+
+        binding.icSettings.setOnClickListener {
+            navigation.navigateTo(ACTION_SETTINGS)
+        }
     }
 
     private fun setupProjectDrawer() {

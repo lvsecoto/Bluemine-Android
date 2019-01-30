@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/bg_tool_bar"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:background="@color/primaryColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ic_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="?attr/actionBarItemBackground"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/bg_tool_bar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
+
+        <ImageView
+            android:id="@+id/finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="?attr/actionBarItemBackground"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/bg_tool_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_check_white_24dp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="16dp"
+            android:text="设置"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textColor="@color/primaryTextColor"
+            app:layout_constraintBottom_toBottomOf="@+id/bg_tool_bar"
+            app:layout_constraintStart_toEndOf="@+id/ic_back" />
+
+        <TextView
+            android:id="@+id/label_host_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:text="Redmine主机地址:"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bg_tool_bar" />
+
+        <EditText
+            android:id="@+id/host_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="20dp"
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/label_host_name"
+            app:layout_constraintTop_toBottomOf="@+id/label_host_name"
+            tools:text="lvsecoto.redmine.com" />
+
+        <TextView
+            android:id="@+id/label_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="用户名:"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            app:layout_constraintStart_toStartOf="@+id/label_host_name"
+            app:layout_constraintTop_toBottomOf="@+id/host_name" />
+
+        <EditText
+            android:id="@+id/user_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:inputType="textPersonName"
+            android:singleLine="true"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_center"
+            app:layout_constraintStart_toStartOf="@+id/label_user_name"
+            app:layout_constraintTop_toBottomOf="@+id/label_user_name"
+            tools:text="lvsecoto" />
+
+        <TextView
+            android:id="@+id/label_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="密码:"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            app:layout_constraintBaseline_toBaselineOf="@+id/label_user_name"
+            app:layout_constraintStart_toStartOf="@+id/guideline_center" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="20dp"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/label_password"
+            app:layout_constraintTop_toBottomOf="@+id/label_password"
+            tools:text="123456" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
