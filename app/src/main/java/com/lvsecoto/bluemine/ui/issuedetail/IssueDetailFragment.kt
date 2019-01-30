@@ -32,7 +32,7 @@ class IssueDetailFragment : Fragment() {
 
     private val detailAdapter = SingleViewAdapter<ViewItemIssueDetailBinding>(R.layout.view_item_issue_detail)
 
-    private val attachmentPicAdapter = AttachmentPicAdapter()
+    private val attachmentPicAdapter = AttachmentAdapter()
 
     private val viewModel : IssueDetailViewModel by viewModel()
 
@@ -54,10 +54,7 @@ class IssueDetailFragment : Fragment() {
             detailAdapter.submit {
                 it.issueDetail = issueDetail
             }
+            attachmentPicAdapter.submitAttachments(issueDetail?.attachments)
         }
-        attachmentPicAdapter.submitDemos(arrayListOf(
-            "错误标记",
-            "示例图片"
-        ))
     }
 }

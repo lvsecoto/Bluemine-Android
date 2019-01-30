@@ -16,7 +16,7 @@ interface RedMineService {
     @GET("/issues.json")
     fun getIssues(@Query("project_id") projectId: Int): LiveData<ApiResponse<IssuesResponse>>
 
-    @GET("/issues/{issue_id}.json")
+    @GET("/issues/{issue_id}.json?include=attachments")
     fun getIssueDetail(@Path("issue_id") id: Int): LiveData<ApiResponse<IssueDetailResponse>>
 
     @PUT("/issues/{issue_id}.json")

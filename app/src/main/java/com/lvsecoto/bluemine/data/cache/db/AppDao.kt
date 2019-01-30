@@ -17,7 +17,7 @@ fun createAppDao(db: AppDatabase) =
 @Dao()
 interface AppDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertProjects(projectEntities: List<ProjectEntity>)
 
     @Query("DELETE from project WHERE 1==1")
@@ -32,7 +32,7 @@ interface AppDao {
     @Query("SELECT projectId as id, projectName as name FROM project ORDER BY projectId")
     fun findAllProjects(): LiveData<List<Project>>
 
-    @Insert()
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertIssues(issues: List<IssueEntity>)
 
     @Query("DELETE from issue WHERE projectId == :projectId")
@@ -58,10 +58,10 @@ interface AppDao {
     )
     fun findIssuesByProject(projectId: Int): LiveData<List<Issue>>
 
-    @Insert()
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAttachments(attachmentEntities: List<AttachmentEntity>)
 
-    @Query("DELETE FROM attachment WHERE issueId == :issueId")
+    @Query("DELETE FROM attachments WHERE issueId == :issueId")
     fun deleteAttachmentsByIssue(issueId: Int)
 
     @Transaction
@@ -70,11 +70,8 @@ interface AppDao {
         insertAttachments(attachmentEntities)
     }
 
-    @Insert()
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertIssueDetail(issueDetailEntity: IssueDetailEntity)
-
-    @Query("DELETE FROM issueDetail WHERE issueId == :issueId")
-    fun deleteIssueDetailByIssue(issueId: Int)
 
     @Transaction
     fun initIssueDetailById(
@@ -82,7 +79,6 @@ interface AppDao {
         issueDetailEntity: IssueDetailEntity,
         attachmentEntities: List<AttachmentEntity>
     ) {
-        deleteIssueDetailByIssue(issueId)
         insertIssueDetail(issueDetailEntity)
         deleteAttachmentsByIssue(issueId)
         insertAttachments(attachmentEntities)
@@ -112,7 +108,7 @@ interface AppDao {
             entity = AttachmentEntity::class,
             parentColumn = "issueId", entityColumn = "issueId"
         )
-        val attachmentEntities: List<AttachmentEntity>
+        val attachmentEntities: List<AttachmentEntity>?
     ) {
         val issueDetailEntity: IssueDetailEntity?
             get() = issueDetailEntities.firstOrNull()
@@ -127,9 +123,19 @@ fun AppDao.findIssueDetailById(issueId: Int) =
             statusName = it.issueEntity.statusName,
 
             hasDetail = it.issueDetailEntity != null,
+
             description = it.issueDetailEntity?.description ?: "",
             priorityName = it.issueDetailEntity?.priorityName ?: "",
-            updatedOn = it.issueDetailEntity?.updateOn ?: ""
+            updatedOn = it.issueDetailEntity?.updateOn ?: "",
+            attachments = it.attachmentEntities?.map {
+                IssueDetail.Attachment(
+                    fileName = it.fileName,
+                    attachmentId = it.attachmentId,
+                    contentType = it.contentType,
+                    contentUrl = it.contentUrl,
+                    thumbnailUrl = it.thumbnailUrl
+                )
+            }?: emptyList()
         )
     }
 

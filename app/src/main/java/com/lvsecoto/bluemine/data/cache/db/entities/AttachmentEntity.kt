@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "attachment",
+    tableName = "attachments",
     indices = [
         Index(
             "issueId"
@@ -30,6 +30,7 @@ data class AttachmentEntity(
     val issueId: Int,
     val projectId: Int,
     val attachmentId: Int,
+    val fileName: String,
     val contentType: String,
     val contentUrl: String,
     val thumbnailUrl: String

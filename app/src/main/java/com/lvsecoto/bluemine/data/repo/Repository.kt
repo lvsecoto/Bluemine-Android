@@ -95,8 +95,6 @@ class Repository(
     }
 
     fun getIssueDetail(issueId: Int): LiveData<Resource<IssueDetail>> {
-        val key = "${KEY_ISSUES_DETAIL}_$issueId"
-
         return object : NetworkBoundResource<IssueDetail, IssueDetailResponse>(executes) {
             override fun saveCallResult(item: IssueDetailResponse?) {
                 appDao.initIssueDetailById(
@@ -115,11 +113,12 @@ class Repository(
                             issueId = issueId,
                             projectId = item.issue.project.id,
                             attachmentId = it.id,
+                            fileName = it.filename,
                             contentType = it.content_type,
                             contentUrl = it.content_url,
                             thumbnailUrl = it.thumbnail_url
                         )
-                    } ?: emptyList()
+                    }
                 )
             }
 
