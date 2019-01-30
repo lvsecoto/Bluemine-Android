@@ -5,7 +5,7 @@ import com.lvsecoto.bluemine.AppExecutors
 import com.lvsecoto.bluemine.data.cache.utils.getObject
 import com.lvsecoto.bluemine.data.cache.utils.putObjectOrObjectList
 import com.lvsecoto.bluemine.data.repo.utils.Resource
-import com.lvsecoto.bluemine.data.vo.RetrofitSettings
+import com.lvsecoto.bluemine.data.vo.RetrofitSetting
 import com.lvsecoto.bluemine.utils.IOLiveData
 
 private const val KEY_RETROFIT_SETTING = "KEY_RETROFIT_SETTING"
@@ -17,18 +17,18 @@ class SettingsRepository(
     private val appExecutors: AppExecutors,
     private val pref: SharedPreferences
 ) {
-    val retrofitSetting =
-        object : IOLiveData<Resource<RetrofitSettings>>(appExecutors) {
+    fun getRetrofitSetting() =
+        object : IOLiveData<RetrofitSetting>(appExecutors) {
             override fun onExecute() {
                 setValue(Resource.success(pref.getObject(KEY_RETROFIT_SETTING)))
             }
-        }
+        }.asLiveData()
 
-    fun setRetrofitSetting(retrofitSettings: RetrofitSettings) =
-        object : IOLiveData<Resource<Void>>(appExecutors) {
+    fun setRetrofitSetting(retrofitSetting: RetrofitSetting) =
+        object : IOLiveData<Void>(appExecutors) {
             override fun onExecute() {
-                pref.putObjectOrObjectList(KEY_RETROFIT_SETTING, retrofitSettings)
+                pref.putObjectOrObjectList(KEY_RETROFIT_SETTING, retrofitSetting)
                 setValue(Resource.success(null))
             }
-        }
+        }.asLiveData()
 }
