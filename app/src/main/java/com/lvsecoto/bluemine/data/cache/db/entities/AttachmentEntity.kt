@@ -10,16 +10,13 @@ import androidx.room.PrimaryKey
     indices = [
         Index(
             "issueId"
-        ),
-        Index(
-            value = ["issueId", "projectId"]
         )
     ],
     foreignKeys = [
         ForeignKey(
             entity = IssueEntity::class,
-            parentColumns = ["issueId", "projectId"],
-            childColumns = ["issueId", "projectId"],
+            parentColumns = ["issueId"],
+            childColumns = ["issueId"],
             onDelete = ForeignKey.CASCADE
         )
     ]
@@ -28,7 +25,6 @@ data class AttachmentEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val issueId: Int,
-    val projectId: Int,
     val attachmentId: Int,
     val fileName: String,
     val contentType: String,

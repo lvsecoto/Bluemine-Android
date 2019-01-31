@@ -1,7 +1,6 @@
 package com.lvsecoto.bluemine.data.cache.db.entities
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
@@ -9,20 +8,12 @@ import androidx.room.PrimaryKey
     tableName = "issue",
     indices = [
         Index(
-            value = ["issueId", "projectId"],
+            value = ["issueId"],
             unique = true
         ),
         Index(
             value = ["projectId"],
             unique = false
-        )
-    ],
-    foreignKeys = [
-        ForeignKey(
-            entity = ProjectEntity::class,
-            parentColumns = ["projectId"],
-            childColumns = ["projectId"],
-            onDelete = ForeignKey.CASCADE
         )
     ]
 )

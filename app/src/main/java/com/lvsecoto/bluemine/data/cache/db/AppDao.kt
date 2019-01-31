@@ -27,8 +27,9 @@ interface AppDao {
     fun deleteAllProjects()
 
     @Transaction
-    fun initWithProjects(projectEntities: List<ProjectEntity>) {
+    fun initProjectsAndClearIssues(projectEntities: List<ProjectEntity>) {
         deleteAllProjects()
+        deleteAllIssue()
         insertProjects(projectEntities)
     }
 
@@ -41,8 +42,11 @@ interface AppDao {
     @Query("DELETE from issue WHERE projectId == :projectId")
     fun deleteIssuesByProject(projectId: Int)
 
+    @Query("DELETE from issue WHERE 1 == 1")
+    fun deleteAllIssue()
+
     @Transaction
-    fun initWithIssuesByProject(issues: List<IssueEntity>, projectId: Int) {
+    fun initIssuesByProject(issues: List<IssueEntity>, projectId: Int) {
         deleteIssuesByProject(projectId)
         insertIssues(issues)
     }
@@ -77,25 +81,18 @@ interface AppDao {
     fun insertIssueDetail(issueDetailEntity: IssueDetailEntity)
 
     @Transaction
-    fun initIssueDetailById(
-        issueId: Int,
+    fun initIssueDetailByIssue(
         issueDetailEntity: IssueDetailEntity,
         attachmentEntities: List<AttachmentEntity>
     ) {
         insertIssueDetail(issueDetailEntity)
-        deleteAttachmentsByIssue(issueId)
+        deleteAttachmentsByIssue(issueDetailEntity.issueId)
         insertAttachments(attachmentEntities)
     }
 
     @Transaction
     @Query("SELECT * FROM issue WHERE issueId == :issueId")
     fun findIssueDetailRelationById(issueId: Int): LiveData<IssueDetailRelation>
-
-    @Query("""UPDATE issue
-        SET statusId = :statusId, statusName = :statusName
-        WHERE issueId == :issueId
-        """)
-    fun updateIssueStatus(issueId: Int, statusId: Int, statusName: String)
 
     class IssueDetailRelation(
         @Embedded
@@ -116,6 +113,12 @@ interface AppDao {
         val issueDetailEntity: IssueDetailEntity?
             get() = issueDetailEntities.firstOrNull()
     }
+
+    @Query("""UPDATE issue
+        SET statusId = :statusId, statusName = :statusName
+        WHERE issueId == :issueId
+        """)
+    fun updateIssueStatus(issueId: Int, statusId: Int, statusName: String)
 }
 
 fun AppDao.findIssueDetailById(issueId: Int) =

@@ -39,7 +39,7 @@ class Repository(
     fun getProjects(): LiveData<Resource<List<Project>>> {
         return object : NetworkBoundResource<List<Project>, ProjectResponse>(executes) {
             override fun saveCallResult(item: ProjectResponse?) {
-                appDao.initWithProjects(
+                appDao.initProjectsAndClearIssues(
                     item!!.projects.map {
                         ProjectEntity(
                             projectId = it.id,
@@ -67,7 +67,7 @@ class Repository(
 
         return object : NetworkBoundResource<List<Issue>, IssuesResponse>(executes) {
             override fun saveCallResult(item: IssuesResponse?) {
-                appDao.initWithIssuesByProject(
+                appDao.initIssuesByProject(
                     item!!.issues.map {
                         IssueEntity(
                             issueId = it.id,
@@ -97,12 +97,10 @@ class Repository(
     fun getIssueDetail(issueId: Int): LiveData<Resource<IssueDetail>> {
         return object : NetworkBoundResource<IssueDetail, IssueDetailResponse>(executes) {
             override fun saveCallResult(item: IssueDetailResponse?) {
-                appDao.initIssueDetailById(
-                    issueId,
+                appDao.initIssueDetailByIssue(
                     item!!.issue.let {
                         IssueDetailEntity(
                             issueId = issueId,
-                            projectId = it.project.id,
                             description = it.description,
                             priorityName = it.priority.name,
                             updateOn = it.updated_on
@@ -111,7 +109,6 @@ class Repository(
                     item.issue.attachments?.map {
                         AttachmentEntity(
                             issueId = issueId,
-                            projectId = item.issue.project.id,
                             attachmentId = it.id,
                             fileName = it.filename,
                             contentType = it.content_type,
