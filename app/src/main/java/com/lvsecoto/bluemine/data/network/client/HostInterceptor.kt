@@ -16,7 +16,7 @@ fun getHostNameInterceptor(repo: SettingsRepository) = { chain: Interceptor.Chai
             .apply {
                 if (localHosts.any { hostName -> it.url().host().matches(hostName.toRegex()) }
                 ) {
-                    host(repo.retrofitSetting?.hostName ?: HOST_NAME)
+                    host(repo.retrofitSetting?.hostName?.notEmptyOrNull()?: HOST_NAME)
                     port(repo.retrofitSetting?.port ?: 80)
                 }
             }
@@ -27,5 +27,13 @@ fun getHostNameInterceptor(repo: SettingsRepository) = { chain: Interceptor.Chai
             .build()
 
     }.let { chain.proceed(it) }
+}
+
+private fun String?.notEmptyOrNull(): String? {
+    return if (this.isNullOrEmpty()) {
+        null
+    } else {
+        this
+    }
 }
 
