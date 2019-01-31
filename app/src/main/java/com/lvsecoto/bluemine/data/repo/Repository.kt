@@ -36,7 +36,9 @@ class Repository(
 ) {
     val limiter = RateLimiter<String>(5, TimeUnit.MINUTES)
 
-    fun getProjects(): LiveData<Resource<List<Project>>> {
+    fun getProjects(now: Boolean = false): LiveData<Resource<List<Project>>> {
+        if (now) limiter.reset(KEY_PROJECTS)
+
         return object : NetworkBoundResource<List<Project>, ProjectResponse>(executes) {
             override fun saveCallResult(item: ProjectResponse?) {
                 appDao.initProjectsAndClearIssues(
@@ -62,8 +64,9 @@ class Repository(
         }.asLiveData()
     }
 
-    fun getIssues(projectId: Int): LiveData<Resource<List<Issue>>> {
+    fun getIssues(projectId: Int, now: Boolean = false): LiveData<Resource<List<Issue>>> {
         val key = "${KEY_ISSUES}_$projectId"
+        if (now) limiter.reset(key)
 
         return object : NetworkBoundResource<List<Issue>, IssuesResponse>(executes) {
             override fun saveCallResult(item: IssuesResponse?) {

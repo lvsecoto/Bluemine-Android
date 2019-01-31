@@ -58,21 +58,31 @@ class ProjectAdapter : DataBoundListAdapter<ProjectAdapter.Wrapper, ViewItemProj
             onClickProject?.invoke(item.project)
 
             selectedPosition = position
-            selectedProject = getItemBoundSave(position)
+            selectedProject = getProjectOrNull(position)
         }
     }
 
     fun submitProject(demos: List<Project>?) {
         submitList((demos ?: emptyList()).map { Wrapper(it) })
-        selectedProject = getItemBoundSave(selectedPosition)
+        selectedProject = getProjectOrNull(selectedPosition)
     }
 
-    private fun getItemBoundSave(position: Int): Project? {
+    private fun getProjectOrNull(position: Int): Project? {
         return if (position in 0 until itemCount) {
             getItem(position).project
         } else {
             null
         }
+    }
+
+    fun clearSelectedProject() {
+        selectedProject = null
+    }
+
+    fun clearAndSelectProject(position: Int) {
+        selectedProject = null
+        selectedPosition = position
+        selectedProject = getProjectOrNull(selectedPosition)
     }
 
     data class Wrapper(val project: Project) {

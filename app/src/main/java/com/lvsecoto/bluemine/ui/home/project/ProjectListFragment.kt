@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lvsecoto.bluemine.R
 import com.lvsecoto.bluemine.data.repo.utils.errorReport
 import com.lvsecoto.bluemine.data.repo.utils.statusobserver.data
+import com.lvsecoto.bluemine.data.repo.utils.statusobserver.onSuccess
 import com.lvsecoto.bluemine.databinding.FragmentProjectsBinding
 import com.lvsecoto.bluemine.ui.home.HomeViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
@@ -46,16 +47,13 @@ class ProjectListFragment : Fragment() {
         persistentSelectedPosition()
         submitProjectsData()
         handleProjectItemEvent()
-
-        binding.refresh.setOnClickListener {
-            viewModel.refreshProject()
-        }
-        viewModel.refreshResult.errorReport(this)
+        handleProjectRefresh()
     }
 
     private fun persistentSelectedPosition() {
         arguments!!.let {
-            projectAdapter.selectedPosition = it.getInt(KEY_POSITION, 0)
+//            projectAdapter.selectedPosition = it.getInt(KEY_POSITION, 0)
+            projectAdapter.clearAndSelectProject(it.getInt(KEY_POSITION, 0))
         }
         projectAdapter.onSelectedPositionChange = { position ->
             arguments!!.putInt(KEY_POSITION, position)
@@ -71,10 +69,23 @@ class ProjectListFragment : Fragment() {
 
     private fun handleProjectItemEvent() {
         projectAdapter.onClickProject = {
-            hostViewModel.onClickProject.value = it
+            hostViewModel.onCloseProjectList.value = it
         }
-        projectAdapter.onSelectedProjectChange = {
-            hostViewModel.onSelectProject.value = it
+        projectAdapter.onSelectedProjectChange = { it ->
+            it?.let { project ->
+                hostViewModel.onSelectProject.value = project
+            }
         }
+    }
+
+    private fun handleProjectRefresh() {
+        binding.refresh.setOnClickListener {
+            viewModel.refreshProject()
+        }
+        viewModel.refreshResult.onSuccess(viewLifecycleOwner) {
+            projectAdapter.clearAndSelectProject(0)
+            hostViewModel.onCloseProjectList.value = null
+        }
+        viewModel.refreshResult.errorReport(this)
     }
 }

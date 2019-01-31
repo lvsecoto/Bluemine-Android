@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.lvsecoto.bluemine.data.repo.Repository
+import com.lvsecoto.bluemine.data.repo.utils.Resource
 import com.lvsecoto.bluemine.data.vo.Issue
 import com.lvsecoto.bluemine.utils.ActionLiveData
 
@@ -21,6 +22,20 @@ class IssuesViewModel(
     val issues = Transformations.switchMap(searchIssueByProjectId) {
         repo.getIssues(it)
     }!!
+
+    private val actionRefreshIssues =
+        ActionLiveData.create<Int, Resource<List<Issue>>> {
+            repo.getIssues(it, now = true)
+        }
+
+    fun refreshIssue() =
+        searchIssueByProjectId.value?.let {
+            actionRefreshIssues.input(it)
+            true
+        } ?: false
+
+    fun getRefreshIssueResult() =
+        actionRefreshIssues.asLiveData()
 
     enum class STATUS(val statusId: Int, val statusName: String) {
         CREATED(1, "新建"),

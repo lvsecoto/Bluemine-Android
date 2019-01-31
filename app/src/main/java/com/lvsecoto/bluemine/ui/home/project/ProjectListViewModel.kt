@@ -8,7 +8,7 @@ class ProjectListViewModel(repo: Repository) : ViewModel() {
     val projects = repo.getProjects()
 
     private val actionRefreshProject =
-        ActionLiveData.create { _: Any? -> repo.getProjects() }
+        ActionLiveData.create { _: Any? -> repo.getProjects(now = true) }
 
     fun refreshProject() {
         actionRefreshProject.call()

@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lvsecoto.bluemine.R
 import com.lvsecoto.bluemine.data.repo.utils.errorReport
 import com.lvsecoto.bluemine.data.repo.utils.statusobserver.data
+import com.lvsecoto.bluemine.data.repo.utils.statusobserver.onError
+import com.lvsecoto.bluemine.data.repo.utils.statusobserver.onSuccess
 import com.lvsecoto.bluemine.databinding.FragmentIssuesListBinding
 import com.lvsecoto.bluemine.ui.home.HomeViewModel
 import com.lvsecoto.bluemine.ui.home.project.ProjectListFragment
@@ -49,7 +51,7 @@ class IssuesListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        hostViewModel.onClickProject.observe(viewLifecycleOwner, Observer {
+        hostViewModel.onCloseProjectList.observe(viewLifecycleOwner, Observer {
             binding.drawer.closeDrawer(DRAWER_GRAVITY_PROJECT)
         })
         hostViewModel.onSelectProject.observe(viewLifecycleOwner, Observer {
@@ -59,6 +61,16 @@ class IssuesListFragment : Fragment() {
         viewModel.issues.errorReport(this)
         viewModel.issues.data(viewLifecycleOwner) {
             issuesAdapter.submitIssues(it)
+        }
+
+        binding.refresh.setOnRefreshListener {
+            if (!viewModel.refreshIssue()) binding.refresh.isRefreshing = false
+        }
+        viewModel.getRefreshIssueResult().onSuccess(viewLifecycleOwner) {
+            binding.refresh.isRefreshing = false
+        }
+        viewModel.getRefreshIssueResult().onError(viewLifecycleOwner) {
+            binding.refresh.isRefreshing = false
         }
 
         issuesAdapter.onClickItem = {
