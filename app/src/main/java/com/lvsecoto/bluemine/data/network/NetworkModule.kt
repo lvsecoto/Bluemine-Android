@@ -7,6 +7,7 @@ import com.lvsecoto.bluemine.data.network.client.createClient
 import com.lvsecoto.bluemine.data.network.service.RedMineService
 import com.lvsecoto.bluemine.data.network.utils.LiveDataCallAdapterFactory
 import okhttp3.OkHttpClient
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -14,9 +15,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val networkModule = module {
     single { createGson() }
-    single { createClient(get()) }
+    single { createClient(androidContext(), get()) }
     single { createRetrofit(get()) }
-    single { createRedMineService(get()) }
+    single { createService(get()) }
 }
 
 fun createGson(): Gson =
@@ -33,6 +34,6 @@ fun createRetrofit(client: OkHttpClient): Retrofit =
         .addCallAdapterFactory(LiveDataCallAdapterFactory())
         .build()
 
-fun createRedMineService(retrofit: Retrofit): RedMineService =
+fun createService(retrofit: Retrofit): RedMineService =
     retrofit.create(RedMineService::class.java)
 

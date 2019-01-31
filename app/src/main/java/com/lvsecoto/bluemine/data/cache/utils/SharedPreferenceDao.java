@@ -2,6 +2,7 @@ package com.lvsecoto.bluemine.data.cache.utils;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -375,12 +376,14 @@ public class SharedPreferenceDao {
             super.onActive();
             setValue(getPrefValue(mPref, mKey, mDefValue));
             mPref.registerOnSharedPreferenceChangeListener(mListener);
+            Log.e("PREF", "act:" + mKey);
         }
 
         @Override
         protected void onInactive() {
             super.onInactive();
             mPref.unregisterOnSharedPreferenceChangeListener(mListener);
+            Log.e("PREF", "inact:" + mKey);
         }
 
         /**

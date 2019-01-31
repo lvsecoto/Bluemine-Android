@@ -62,23 +62,47 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="16dp"
-            android:text="Redmine主机地址:"
+            android:layout_marginTop="24dp"
+            android:text="主机地址:"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bg_tool_bar" />
+            app:layout_constraintTop_toBottomOf="@+id/header_redmine" />
 
         <EditText
             android:id="@+id/host_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="8dp"
             android:singleLine="true"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guide_quarter_end"
             app:layout_constraintStart_toStartOf="@+id/label_host_name"
             app:layout_constraintTop_toBottomOf="@+id/label_host_name"
             tools:text="lvsecoto.redmine.com" />
+
+        <TextView
+            android:id="@+id/label_port"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="端口:"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            app:layout_constraintBaseline_toBaselineOf="@+id/label_host_name"
+            app:layout_constraintStart_toStartOf="@+id/guide_quarter_end" />
+
+        <EditText
+            android:id="@+id/port"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="20dp"
+            android:ems="10"
+            android:hint="80"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guide_quarter_end"
+            app:layout_constraintTop_toBottomOf="@+id/label_port" />
 
         <TextView
             android:id="@+id/label_user_name"
@@ -132,6 +156,34 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent=".5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_quarter_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".75" />
+
+        <TextView
+            android:id="@+id/header_redmine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:text="Redmine配置"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bg_tool_bar" />
+
+        <View
+            android:id="@+id/divider_redmine_header"
+            android:layout_width="395dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header_redmine" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -2,11 +2,14 @@ package com.lvsecoto.bluemine.data.repo.utils
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import com.lvsecoto.bluemine.AppExecutors
 
-fun <T> LiveData<T>.toSuccess() : LiveData<Resource<T>> =
+fun <T> LiveData<T>.toSuccess(appExecutors: AppExecutors) : LiveData<Resource<T>> =
     MediatorLiveData<Resource<T>>().apply {
-        value = Resource.loading(null)
-        addSource(this@toSuccess) {
-            value = Resource.success(it)
+        appExecutors.mainThread().execute {
+            value = Resource.loading(null)
+            addSource(this@toSuccess) {
+                value = Resource.success(it)
+            }
         }
     }

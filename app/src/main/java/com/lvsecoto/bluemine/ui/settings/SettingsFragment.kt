@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.lvsecoto.bluemine.R
 import com.lvsecoto.bluemine.data.repo.utils.statusobserver.hasSuccess
+import com.lvsecoto.bluemine.data.vo.DEFAULT_PORT
 import com.lvsecoto.bluemine.data.vo.RetrofitSetting
 import com.lvsecoto.bluemine.databinding.FragmentSettingsBinding
 import com.lvsecoto.bluemine.utils.navigation.popup
@@ -57,6 +58,7 @@ class SettingsFragment : Fragment() {
             viewModel.setRetrofitSetting(
                 RetrofitSetting(
                     hostName = dataBinding.hostName.text.toString(),
+                    port = dataBinding.port.text.toString().toIntOrNull() ?: 80,
                     userName = dataBinding.userName.text.toString(),
                     password = dataBinding.password.text.toString()
                 )
@@ -77,6 +79,7 @@ class SettingsFragment : Fragment() {
         saveRetrofitSetting(
             RetrofitSetting(
                 hostName = dataBinding.hostName.text.toString(),
+                port = dataBinding.port.text.toString().toIntOrNull() ?: DEFAULT_PORT,
                 userName = dataBinding.userName.text.toString(),
                 password = dataBinding.password.text.toString()
             )
@@ -88,6 +91,7 @@ class SettingsFragment : Fragment() {
             arguments!!.getString(KEY_RETROFIT_SETTING)
                 .let { gson.fromJson(it, RetrofitSetting::class.java) }
         dataBinding.hostName.setText(retrofitSetting.hostName)
+        dataBinding.port.setText(retrofitSetting.port.toString())
         dataBinding.userName.setText(retrofitSetting.userName)
         dataBinding.password.setText(retrofitSetting.password)
     }
