@@ -17,6 +17,9 @@ fun createAppDao(db: AppDatabase) =
 @Dao()
 interface AppDao {
 
+    @Query("DELETE FROM project WHERE 1 == 1")
+    fun clearRetrofitData()
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertProjects(projectEntities: List<ProjectEntity>)
 

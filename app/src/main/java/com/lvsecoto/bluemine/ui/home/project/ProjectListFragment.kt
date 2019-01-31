@@ -15,6 +15,8 @@ import com.lvsecoto.bluemine.ui.home.HomeViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
+private val KEY_POSITION = "position"
+
 class ProjectListFragment : Fragment() {
 
     companion object {
@@ -41,21 +43,33 @@ class ProjectListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        checkNotNull(arguments) {
-            "please create fragment with setArgument()"
+        persistentSelectedPosition()
+        submitProjectsData()
+        handleProjectItemEvent()
+
+        binding.refresh.setOnClickListener {
+            viewModel.refreshProject()
         }
+        viewModel.refreshResult.errorReport(this)
+    }
+
+    private fun persistentSelectedPosition() {
         arguments!!.let {
-            projectAdapter.selectedPosition = it.getInt("position", 0)
+            projectAdapter.selectedPosition = it.getInt(KEY_POSITION, 0)
         }
         projectAdapter.onSelectedPositionChange = { position ->
-            arguments!!.putInt("position", position)
+            arguments!!.putInt(KEY_POSITION, position)
         }
+    }
 
+    private fun submitProjectsData() {
         viewModel.projects.errorReport(this)
         viewModel.projects.data(viewLifecycleOwner) {
             projectAdapter.submitProject(it)
         }
+    }
 
+    private fun handleProjectItemEvent() {
         projectAdapter.onClickProject = {
             hostViewModel.onClickProject.value = it
         }

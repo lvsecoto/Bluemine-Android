@@ -29,6 +29,10 @@ class ActionLiveData<InputType, ResultType>(
         this.input.value = input
     }
 
+    fun call() {
+        this.input.value = null
+    }
+
     fun asLiveData(): LiveData<ResultType> {
         return result
     }
